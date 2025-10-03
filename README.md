@@ -139,18 +139,25 @@ git remote show origin
 ### Fetching and Pulling
  
 Downloads new data (commits, branches, tags) from the remote but does not merge it into your working branch. Updates your local copy of the remote branches. Lets you review changes before merging.
+- Fetches all branches and updates from the remote named origin.
+- Downloads the latest commits from the main branch on the remote (origin).
+- Fetches only the feature-login branch from the remote origin.
 ```bash
 git fetch origin
+git fetch origin main
+git fetch origin feature-login
 ```
  
 Merges the fetched changes from origin/main into your current local branch:
 ```bash
-git merge origin/main
+git merge main
+git merge feature-login
 ```
  
 Downloads data and merges it into your current branch. Equivalent to `git fetch` + `git merge`. Automatically updates your working directory with remote changes.
 ```bash
 git pull origin main
+git pull origin feature-login
 ```
  
 ### Removing and Renaming Remotes
@@ -235,7 +242,13 @@ git log --oneline
 Create new branch:
 ```bash
 git branch new_branch
+git branch feature/add-login-page
 ```
+ 
+**Naming conventions for branches:**
+- `feature/feature-name` - for new features
+- `bugfix/bug-description` - for bug fixes
+- `hotfix/critical-fix` - for urgent fixes
  
 Lists all branches:
 ```bash
@@ -402,10 +415,16 @@ git stash drop stash@{0}
 ## Pushing Changes
  
 Upload your local commits to a remote repository, such as GitHub:
+Pushes your local main branch to the remote main branch
 ```bash
 git push origin main
 ```
- 
+
+Pushes your local feature-name branch to the remote repository under the same name.
+ ```bash
+git push origin feature-name
+```
+
 ### Setting Upstream Branch
  
 "Upstream" refers to the remote branch that your local branch is tracking — typically the branch you pull changes from and push changes to.
@@ -414,6 +433,7 @@ The `-u` (or `--set-upstream`) flag tells Git: "Track the remote branch origin/m
  
 ```bash
 git push -u origin main
+git push -u origin feature-name
 ```
  
 This means future `git pull` or `git push` commands can be run without specifying the remote and branch:
@@ -429,7 +449,14 @@ To see what upstream branch your current branch is tracking:
 ```bash
 git branch -vv
 ```
- 
+
+### Delete feature branch (optional)
+
+```bash
+git branch -d feature-name
+git push origin --delete feature-name
+```
+
 ## Viewing Differences
  
 Shows changes in your working directory that haven't been staged yet:
