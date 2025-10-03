@@ -479,7 +479,111 @@ Shows what's different between two branches:
 ```bash
 git diff branch1 branch2
 ```
+
+
+### Useful Git Rebase Commands
  
+###  **Basic Rebase**
+   ```bash
+   git rebase <branch>
+   ```
+   - **What it does**: Takes your current branch’s commits and puts them on top of another branch.
+   - **Example**:
+     ```bash
+     git checkout feature
+     git rebase main
+     ```
+     - You’re on the `feature` branch. This command takes your `feature` branch’s changes and reapplies them on top of the latest `main` branch.
+     - If `main` has new changes, your `feature` branch will now include those changes, and your commits will sit on top.
+  
+#### Visual Example
+ 
+**Before rebase:**
+```
+main:     A -- B -- C
+                \
+feature:       D -- E
+```
+ 
+**After `git rebase main`:**
+```
+main:     A -- B -- C
+                    \
+feature:           D' -- E'
+```
+ 
+Notice D' and E' have **apostrophes** - they're NEW commits with:
+-  Same changes (code)
+-  Same commit messages
+-  **Different commit IDs (hashes)**
+-  **Different parent commits**
+ 
+ 
+#### You Can't Simply Push
+```bash
+git push   # ❌ This will fail!
+```
+Git says: "Your branch history doesn't match the remote!"
+ 
+You need to force push:
+```bash
+git push --force-with-lease   # ✅ This overwrites remote with your new commits
+```
+ 
+#### Never Rebase Shared Branches
+If others have your old commits (D and E), and you push the new commits (D' and E'), it causes chaos:
+- They have commits that no longer exist
+- They'll have merge conflicts when they try to pull
+- The history becomes a mess
+ 
+#### Simple Rule
+ 
+**Rebase rewrites history by creating new commits = Only do it on YOUR OWN branches!**
+ 
+#### Check It Yourself
+ 
+```bash
+# Before rebase
+git log --oneline
+# abc123 My commit
+# def456 Another commit
+ 
+# After rebase
+git log --oneline
+# xyz789 My commit        ← Same message, DIFFERENT hash!
+# uvw012 Another commit   ← New commit ID!
+```
+
+
+### Rebase vs. Merge
+- **Rebase** = creates new commits, replaces old ones
+- **Merge** = adds new commits, keeps old ones
+
+   
+**Example**:
+- With `merge`, history might look like:
+  ```
+  main:  A---B---C---Merge
+             \         /
+  feature:    D---E--
+  ```
+- With `rebase`, history looks like:
+  ```
+  main:  A---B---C---D'---E'
+  ```
+  (D' and E' are rewritten versions of D and E.)
+ 
+
+ 
+### What Actually Happens
+ 
+When you rebase, Git:
+1. **Takes your commits** from your branch
+2. **Copies them** onto the new base
+3. **Creates brand new commits** with new commit IDs (hashes)
+4. **Deletes the old commits** (they become orphaned)
+ 
+
 ## Key Concepts
  
 - **Branch** is a label
